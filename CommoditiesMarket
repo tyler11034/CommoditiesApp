@@ -9,10 +9,6 @@ namespace Tyler_sMultithreadingTestApp
         private readonly Random _random;
         private decimal _currentPrice;
 
-        //public CommoditiesMarket(CashFlowManager cashFlowManager)
-        //{
-        //    _cashFlowManager = cashFlowManager;
-        //}
 
         public void Start()
         {
@@ -21,7 +17,7 @@ namespace Tyler_sMultithreadingTestApp
             {
                 UpdatePrice();
                 Console.WriteLine($"Current Market Price: {Math.Round(CurrentPrice, 2)}");
-                Thread.Sleep(1000);
+                Thread.Sleep(5000);
             }
         }
 
@@ -44,11 +40,13 @@ namespace Tyler_sMultithreadingTestApp
         public int BuyCommodities(int amount, decimal price)
         {
             _cashFlowManager.DeductFunds(price);
+            //_cashFlowManager.AddCommodities(amount);
             return _cashFlowManager.OwnedCommodities += amount;
         }
         public int SellCommodities(int amount, decimal price)
         {
             _cashFlowManager.AddFunds(price);
+            //_cashFlowManager.DeductCommodities(amount);
             return _cashFlowManager.OwnedCommodities -= amount;
         }
     }
