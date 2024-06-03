@@ -7,26 +7,31 @@ namespace Tyler_sMultithreadingTestApp
     class Program
     {
         private const decimal InitialFunds = 1000; // use to set businesses initial funds
-        private const decimal InitialPrice = 10;  // use to set the markets initial commodity trading price
+        private const decimal InitialPrice = 50;  // use to set the markets initial commodity trading price
         
         static void Main(string[] args)
         {
             Console.WriteLine($"The business's starting capital is: ${InitialFunds}");
             // Initialize cash flow management system
             CashFlowManager cashFlowManager = new CashFlowManager(InitialFunds);
+            CommoditiesMarket commoditiesMarket = new CommoditiesMarket(cashFlowManager, InitialPrice);
 
             // Create and start thread for Commodities Market
-            Thread commoditiesMarketThread = new Thread(() =>
-            {
-                CommoditiesMarket commoditiesMarket = new CommoditiesMarket(cashFlowManager, InitialPrice);
-                commoditiesMarket.Start();
-            });
+            Thread commoditiesMarketThread = new Thread(commoditiesMarket.Start);
             commoditiesMarketThread.Start();
+
+            // Create and start thread for Commodities Market
+            //Thread commoditiesMarketThread = new Thread(() =>
+            //{
+            //    CommoditiesMarket commoditiesMarket = new CommoditiesMarket(cashFlowManager, InitialPrice);
+            //    commoditiesMarket.Start();
+            //});
+            //commoditiesMarketThread.Start();
 
             // Create and start thread for Commodities Manager
             Thread commoditiesManagerThread = new Thread(() =>
             {
-                CommoditiesManager commoditiesManager = new CommoditiesManager(cashFlowManager);
+                CommoditiesManager commoditiesManager = new CommoditiesManager(cashFlowManager, commoditiesMarket);
                 commoditiesManager.Start();
             });
             commoditiesManagerThread.Start();
