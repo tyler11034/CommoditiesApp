@@ -1,0 +1,43 @@
+using System;
+using System.Threading;
+
+namespace Tyler_sMultithreadingTestApp
+{
+    
+    class Program
+    {
+        private const decimal InitialFunds = 1000; // use to set businesses initial funds
+        private const decimal InitialPrice = 10;  // use to set the markets initial commodity trading price
+        
+        static void Main(string[] args)
+        {
+            Console.WriteLine($"The business's starting capital is: ${InitialFunds}");
+            // Initialize cash flow management system
+            CashFlowManager cashFlowManager = new CashFlowManager(InitialFunds);
+
+            // Create and start thread for Commodities Market
+            Thread commoditiesMarketThread = new Thread(() =>
+            {
+                CommoditiesMarket commoditiesMarket = new CommoditiesMarket(cashFlowManager, InitialPrice);
+                commoditiesMarket.Start();
+            });
+            commoditiesMarketThread.Start();
+
+            // Create and start thread for Commodities Manager
+            Thread commoditiesManagerThread = new Thread(() =>
+            {
+                CommoditiesManager commoditiesManager = new CommoditiesManager(cashFlowManager);
+                commoditiesManager.Start();
+            });
+            commoditiesManagerThread.Start();
+
+
+            // Keep the main thread alive
+            while (true)
+            {
+                Thread.Sleep(1000); // Sleep before checking again
+            }
+        }
+    }
+}
+
