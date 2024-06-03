@@ -1,0 +1,53 @@
+using System;
+using System.Threading;
+
+namespace Tyler_sMultithreadingTestApp
+{
+    class CommoditiesManager
+    {
+        private CashFlowManager _cashFlowManager;
+
+        public CommoditiesManager(CashFlowManager cashFlowManager)
+        {
+            _cashFlowManager = cashFlowManager;
+        }
+
+        public void Start()
+        {
+            CommoditiesMarket market = new CommoditiesMarket(_cashFlowManager, _cashFlowManager.AvailableFunds);
+
+            while (true)
+            {
+
+                // Check if the current price is above 50
+                if (market.CurrentPrice > 50)
+                {
+                    // Check if there are commodities to sell
+                    if (_cashFlowManager.OwnedCommodities > 0)
+                    {
+                        // Sell commodities
+                        decimal totalRevenue = market.SellCommodities(_cashFlowManager.OwnedCommodities, market.CurrentPrice);
+                        _cashFlowManager.AddFunds(totalRevenue);
+                        Console.WriteLine($"Sold {_cashFlowManager.OwnedCommodities} commodities for {totalRevenue}. Current funds: {_cashFlowManager.AvailableFunds}");
+                    }
+                }
+                // Check if the current price is below 50
+                else if (market.CurrentPrice < 50)
+                {
+                    // Check if there are funds available to buy commodities
+                    if (_cashFlowManager.AvailableFunds >= market.CurrentPrice)
+                    {
+                        // Buy commodities
+                        int amountToBuy = 1; // Buying only 1 commodity for simplicity
+                        decimal totalCost = market.BuyCommodities(amountToBuy, market.CurrentPrice);
+                        _cashFlowManager.DeductFunds(totalCost);
+                        Console.WriteLine($"Bought {amountToBuy} commodity for {totalCost}. Current funds: {_cashFlowManager.AvailableFunds}");
+                    }
+                }
+
+                // Wait for a certain period before checking again (e.g., 5 seconds)
+                Thread.Sleep(5000);
+            }
+        }
+    }
+}
