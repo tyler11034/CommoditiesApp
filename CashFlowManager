@@ -1,0 +1,52 @@
+using System;
+
+namespace Tyler_sMultithreadingTestApp
+{
+    public class CashFlowManager
+    {
+        private decimal _availableFunds;
+        public int OwnedCommodities;
+
+        public decimal AvailableFunds => _availableFunds;
+
+        public CashFlowManager(decimal initialFunds = 0)
+        {
+            _availableFunds = initialFunds;
+        }
+
+        public void AddFunds(decimal amount)
+        {
+            _availableFunds += amount;
+        }
+
+        public void DeductFunds(decimal amount)
+        {
+            if (amount > _availableFunds)
+            {
+                throw new InvalidOperationException("Insufficient funds.");
+            }
+
+            _availableFunds -= amount;
+        }
+
+        public void AddCommodities(int amount)
+        {
+            OwnedCommodities += amount;
+        }
+
+        public void DeductCommodities(int amount)
+        {
+            if (amount > OwnedCommodities)
+            {
+                throw new InvalidOperationException("Insufficient commodities to sell.");
+            }
+
+            OwnedCommodities -= amount;
+        }
+
+        public void LogTransaction(string description, decimal amount)
+        {
+            Console.WriteLine($"{description}: {amount}");
+        }
+    }
+}
