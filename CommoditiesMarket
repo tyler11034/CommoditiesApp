@@ -1,0 +1,55 @@
+using System;
+using System.Threading;
+
+namespace Tyler_sMultithreadingTestApp
+{
+    public class CommoditiesMarket
+    {
+        private readonly CashFlowManager _cashFlowManager;
+        private readonly Random _random;
+        private decimal _currentPrice;
+
+        //public CommoditiesMarket(CashFlowManager cashFlowManager)
+        //{
+        //    _cashFlowManager = cashFlowManager;
+        //}
+
+        public void Start()
+        {
+            Console.WriteLine($"Current Market Price: {Math.Round(CurrentPrice, 2)}");
+            while (true)
+            {
+                UpdatePrice();
+                Console.WriteLine($"Current Market Price: {Math.Round(CurrentPrice, 2)}");
+                Thread.Sleep(1000);
+            }
+        }
+
+        public CommoditiesMarket(CashFlowManager cashFlowManager, decimal initialPrice)
+        {
+            _cashFlowManager = cashFlowManager;
+            _random = new Random();
+            _currentPrice = initialPrice;
+        }
+
+        public decimal CurrentPrice => _currentPrice;
+
+        public void UpdatePrice()
+        {
+            // Simulate random price fluctuations
+            _currentPrice += (_random.Next(-10, 11) / 100.0m) * _currentPrice;
+            if (_currentPrice < 1) _currentPrice = 1; // Ensure price doesn't drop too low
+        }
+
+        public int BuyCommodities(int amount, decimal price)
+        {
+            _cashFlowManager.DeductFunds(price);
+            return _cashFlowManager.OwnedCommodities += amount;
+        }
+        public int SellCommodities(int amount, decimal price)
+        {
+            _cashFlowManager.AddFunds(price);
+            return _cashFlowManager.OwnedCommodities -= amount;
+        }
+    }
+}
